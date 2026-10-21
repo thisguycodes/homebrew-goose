@@ -30,7 +30,7 @@ git commit -am "goose vX.Y.Z" && git push
 ```
 
 A scheduled GitHub Action (`.github/workflows/update-formula.yml`) does this
-automatically once a day.
+automatically every hour.
 
 ## Cutting a release on the fork
 
