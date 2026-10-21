@@ -34,6 +34,19 @@ automatically once a day.
 
 ## Cutting a release on the fork
 
-The fork inherits upstream's release workflow. Tag a commit like
-`v1.55.0-thisguy.1` (must start with `vX.Y.Z`) and push the tag; the workflow
-builds and attaches the `goose-<triple>.tar.bz2` assets the formula expects.
+The fork inherits upstream's `release.yml`, which publishes a release when you
+push a tag matching `v1.*` (e.g. `v1.55.0-thisguy.1`):
+
+```sh
+git -C <fork-checkout> tag v1.55.0-thisguy.1 && git -C <fork-checkout> push origin v1.55.0-thisguy.1
+```
+
+Caveats:
+
+- Enable Actions on the fork first (GitHub disables workflows on forks by default).
+- Tag builds turn on macOS signing/notarization (`environment: signing`); without
+  the upstream signing secrets those jobs will fail. Either add your own signing
+  secrets under a `signing` environment, or strip the signing inputs from
+  `release.yml`/`bundle-macos.yml` on your fork's default branch before tagging.
+- The Linux CLI tarballs (`x86_64`/`aarch64-unknown-linux-gnu`) don't need signing
+  and build on any push to `release/*` branches too — handy for a first test.
