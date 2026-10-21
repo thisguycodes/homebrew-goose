@@ -14,10 +14,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Check the fork has a release
+        id: check
+        run: |
+          code=$(curl -s -o /dev/null -w '%{http_code}' https://api.github.com/repos/thisguycodes/goose/releases/latest)
+          echo "has_release=$([ "$code" = 200 ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+
       - name: Regenerate formula from latest fork release
+        if: steps.check.outputs.has_release == 'true'
         run: script/update-formula
 
       - name: Commit and push if changed
+        if: steps.check.outputs.has_release == 'true'
         run: |
           if git diff --quiet; then
             echo "No changes"
